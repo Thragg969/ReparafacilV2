@@ -6,11 +6,12 @@ import com.Reparafacil.ReparafacilV2.repository.ClienteRepository;
 import com.Reparafacil.ReparafacilV2.service.ClienteService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.lang.NonNull;
+
 import java.util.List;
 
 @Service
 @Transactional
+@SuppressWarnings("null") // para los warnings de null-safety que te está marcando Eclipse
 public class ClienteServiceImpl implements ClienteService {
 
     private final ClienteRepository repo;
@@ -20,16 +21,14 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<Cliente> listar() {
         return repo.findAll();
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Cliente buscarPorId(Long id) {
         return repo.findById(id)
-                .orElseThrow(() -> new NotFoundException("Cliente no encontrado: " + id));
+                .orElseThrow(() -> new NotFoundException("Cliente no encontrado con id: " + id));
     }
 
     @Override
@@ -39,13 +38,11 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Override
     public Cliente actualizar(Long id, Cliente cliente) {
-        Cliente actual = buscarPorId(id);
-        actual.setNombre(cliente.getNombre());
-        actual.setApellido(cliente.getApellido());
-        actual.setEmail(cliente.getEmail()); 
-        actual.setTelefono(cliente.getTelefono());
-        actual.setDireccion(cliente.getDireccion());
-        return repo.save(actual);
+        // verifico que exista
+        buscarPorId(id);
+        // me aseguro de que se guarde con ese id
+        cliente.setId(id);
+        return repo.save(cliente);
     }
 
     @Override

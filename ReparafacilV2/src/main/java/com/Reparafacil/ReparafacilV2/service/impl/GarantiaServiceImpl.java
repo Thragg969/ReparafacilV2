@@ -11,6 +11,7 @@ import java.util.List;
 
 @Service
 @Transactional
+@SuppressWarnings("null")
 public class GarantiaServiceImpl implements GarantiaService {
 
     private final GarantiaRepository repo;
@@ -20,16 +21,14 @@ public class GarantiaServiceImpl implements GarantiaService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<Garantia> listar() {
         return repo.findAll();
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Garantia buscarPorId(Long id) {
         return repo.findById(id)
-                .orElseThrow(() -> new NotFoundException("Garantía no encontrada: " + id));
+                .orElseThrow(() -> new NotFoundException("Garantía no encontrada con id: " + id));
     }
 
     @Override
@@ -39,11 +38,11 @@ public class GarantiaServiceImpl implements GarantiaService {
 
     @Override
     public Garantia actualizar(Long id, Garantia garantia) {
-        Garantia actual = buscarPorId(id);
-        actual.setFechaInicio(garantia.getFechaInicio());
-        actual.setFechaFin(garantia.getFechaFin());
-        actual.setDetalles(garantia.getDetalles());
-        return repo.save(actual);
+        // verifico que exista
+        buscarPorId(id);
+        // fuerzo el mismo id
+        garantia.setId(id);
+        return repo.save(garantia);
     }
 
     @Override

@@ -11,6 +11,7 @@ import java.util.List;
 
 @Service
 @Transactional
+@SuppressWarnings("null") // esto es para los warnings de @NonNull que te está tirando Eclipse
 public class AgendaServiceImpl implements AgendaService {
 
     private final AgendaRepository repo;
@@ -20,16 +21,14 @@ public class AgendaServiceImpl implements AgendaService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<Agenda> listar() {
         return repo.findAll();
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Agenda buscarPorId(Long id) {
         return repo.findById(id)
-                .orElseThrow(() -> new NotFoundException("Slot de Agenda no encontrado: " + id));
+                .orElseThrow(() -> new NotFoundException("Agenda no encontrada con id: " + id));
     }
 
     @Override
@@ -39,11 +38,11 @@ public class AgendaServiceImpl implements AgendaService {
 
     @Override
     public Agenda actualizar(Long id, Agenda agenda) {
-        Agenda actual = buscarPorId(id);
-        actual.setFechaHoraInicio(agenda.getFechaHoraInicio());
-        actual.setFechaHoraFin(agenda.getFechaHoraFin());
-        actual.setEstado(agenda.getEstado());
-        return repo.save(actual);
+        // primero valido que exista
+        buscarPorId(id);
+        // me aseguro de guardar con el mismo id
+        agenda.setId(id);
+        return repo.save(agenda);
     }
 
     @Override

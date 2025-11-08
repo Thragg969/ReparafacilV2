@@ -11,6 +11,7 @@ import java.util.List;
 
 @Service
 @Transactional
+@SuppressWarnings("null")
 public class TecnicoServiceImpl implements TecnicoService {
 
     private final TecnicoRepository repo;
@@ -20,16 +21,14 @@ public class TecnicoServiceImpl implements TecnicoService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<Tecnico> listar() {
         return repo.findAll();
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Tecnico buscarPorId(Long id) {
         return repo.findById(id)
-                .orElseThrow(() -> new NotFoundException("Técnico no encontrado: " + id));
+                .orElseThrow(() -> new NotFoundException("Técnico no encontrado con id: " + id));
     }
 
     @Override
@@ -39,14 +38,11 @@ public class TecnicoServiceImpl implements TecnicoService {
 
     @Override
     public Tecnico actualizar(Long id, Tecnico tecnico) {
-        Tecnico actual = buscarPorId(id);
-        actual.setNombre(tecnico.getNombre());
-        actual.setApellido(tecnico.getApellido());
-        actual.setEmail(tecnico.getEmail());
-        actual.setTelefono(tecnico.getTelefono());
-        actual.setEspecialidad(tecnico.getEspecialidad());
-        actual.setDisponible(tecnico.isDisponible());
-        return repo.save(actual);
+        // verifico que exista
+        buscarPorId(id);
+        // guardo con el id que viene por la ruta
+        tecnico.setId(id);
+        return repo.save(tecnico);
     }
 
     @Override

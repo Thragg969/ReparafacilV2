@@ -11,6 +11,7 @@ import java.util.List;
 
 @Service
 @Transactional
+@SuppressWarnings("null")
 public class ServicioServiceImpl implements ServicioService {
 
     private final ServicioRepository repo;
@@ -20,35 +21,28 @@ public class ServicioServiceImpl implements ServicioService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<Servicio> listar() {
         return repo.findAll();
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Servicio buscarPorId(Long id) {
         return repo.findById(id)
-                .orElseThrow(() -> new NotFoundException("Servicio no encontrado: " + id));
+                .orElseThrow(() -> new NotFoundException("Servicio no encontrado con id: " + id));
     }
 
     @Override
     public Servicio crear(Servicio servicio) {
-        // En un caso real, buscaríamos Cliente y Tecnico por ID y los asignaríamos
-        // aquí para asegurar que existen.
         return repo.save(servicio);
     }
 
     @Override
     public Servicio actualizar(Long id, Servicio servicio) {
-        Servicio actual = buscarPorId(id);
-        actual.setDescripcionProblema(servicio.getDescripcionProblema());
-        actual.setDiagnostico(servicio.getDiagnostico());
-        actual.setSolucion(servicio.getSolucion());
-        actual.setEstado(servicio.getEstado());
-        // No actualizamos relaciones (cliente, tecnico) aquí,
-        // eso sería en endpoints más complejos (ej: /api/servicios/1/asignar/2)
-        return repo.save(actual);
+        // verifico que exista
+        buscarPorId(id);
+        // fuerzo el mismo id que viene por la URL
+        servicio.setId(id);
+        return repo.save(servicio);
     }
 
     @Override

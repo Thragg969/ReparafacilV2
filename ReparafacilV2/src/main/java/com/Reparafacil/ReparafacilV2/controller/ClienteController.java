@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/clientes")
+@RequestMapping("/api/clientes")  // prefijo /api correcto para CORS
+@CrossOrigin(origins = "http://localhost:3000")  // asegura conexión directa con React
 public class ClienteController {
 
     private final ClienteService service;
@@ -30,8 +31,9 @@ public class ClienteController {
     @Operation(summary = "Obtener cliente por ID")
     @ApiResponse(responseCode = "404", description = "Cliente no encontrado")
     @GetMapping("/{id}")
-    public Cliente obtener(@PathVariable Long id) {
-        return service.buscarPorId(id);
+    public ResponseEntity<Cliente> obtener(@PathVariable Long id) {
+        Cliente cliente = service.buscarPorId(id);
+        return ResponseEntity.ok(cliente);
     }
 
     @Operation(summary = "Crear un nuevo cliente")
@@ -44,8 +46,9 @@ public class ClienteController {
 
     @Operation(summary = "Actualizar un cliente existente")
     @PutMapping("/{id}")
-    public Cliente actualizar(@PathVariable Long id, @Valid @RequestBody Cliente cliente) {
-        return service.actualizar(id, cliente);
+    public ResponseEntity<Cliente> actualizar(@PathVariable Long id, @Valid @RequestBody Cliente cliente) {
+        Cliente actualizado = service.actualizar(id, cliente);
+        return ResponseEntity.ok(actualizado);
     }
 
     @Operation(summary = "Eliminar un cliente")

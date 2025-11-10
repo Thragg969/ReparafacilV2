@@ -1,6 +1,6 @@
 #FileLock
-#Fri Nov 07 16:46:08 CLST 2025
-hostName=SCAAOB00LC00804.duoc.acad
-id=19a5fdad481a5ea0fba7559abc8b455cdb9bffdab8b
+#Mon Nov 10 16:23:44 CLST 2025
+hostName=Clonazepunk
+id=19a6f394bdce914fdc8d13ca3ff31e23fe070032dcd
 method=file
-server=10.155.30.8\:59318
+server=192.168.56.1\:56663
